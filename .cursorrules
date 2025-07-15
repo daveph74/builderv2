@@ -1,0 +1,142 @@
+# Builder - Laravel PDF Template Editor
+
+## Project Overview
+
+This is a Laravel-based PDF template editor application with a JavaScript canvas-based frontend. The application allows users to create, edit, and manage PDF templates with layers, guide lines, and color management (RGB/Hex and CMYK).
+
+## Technology Stack
+
+-   **Backend**: Laravel PHP framework
+-   **Frontend**: Vanilla JavaScript with HTML5 Canvas
+-   **Database**: MySQL
+-   **Domain**: builder.test (local development)
+
+## Project Structure
+
+```
+builder.test/
+├── app/Http/Controllers/     # API controllers
+├── app/Models/              # Eloquent models
+├── database/migrations/     # Database migrations
+├── public/                  # Public assets and entry point
+├── resources/js/            # Frontend JavaScript modules
+├── resources/css/           # Frontend styles
+├── resources/views/         # Blade templates
+└── routes/                  # API and web routes
+```
+
+## Key Features Implemented
+
+1. **Canvas-based Template Editor**
+
+    - Drag-and-drop functionality
+    - Layer management (text, image, shape layers)
+    - Undo/Redo functionality
+    - Zoom controls
+    - Selection and manipulation tools
+
+2. **Guide Lines System**
+
+    - Draggable horizontal/vertical guide lines
+    - Snap-to-guide functionality
+    - Always on top (z-index: 999)
+    - Cyan color (#00FFFF)
+
+3. **Color Management**
+
+    - RGB/Hex color picker
+    - CMYK input controls (horizontal layout)
+    - Real-time color conversion
+    - Border and fill color controls
+
+4. **Template System**
+    - Save/Load templates
+    - Template name management
+    - Layer data persistence
+    - Template item management
+
+## Recent Issues Resolved
+
+### 1. Template Saving Error (FIXED)
+
+**Problem**: "Error saving template: The name has already been taken"
+**Solution**:
+
+-   Added `currentTemplateId` tracking for existing vs new templates
+-   Fixed PUT vs POST request handling
+-   Updated validation to only check name uniqueness for new templates
+-   Fixed route model binding in `TemplateController.php`
+
+### 2. Guide Lines Z-Index (FIXED)
+
+**Problem**: Guide lines appearing behind canvas elements
+**Solution**: Set guide lines container to `z-index: 999`
+
+### 3. Guide Line Color (FIXED)
+
+**Problem**: Guide lines were blue, user requested cyan
+**Solution**: Changed all guide line colors to `#00FFFF`
+
+### 4. CMYK Input Layout (FIXED)
+
+**Problem**: CMYK inputs in vertical 2x2 grid, user wanted horizontal
+**Solution**:
+
+-   Single-row horizontal layout with labels above
+-   Used specific CSS selectors with `!important` to override conflicts
+-   Width: 55px to accommodate 3-digit numbers
+
+### 5. Input Consistency (FIXED)
+
+**Problem**: CMYK inputs didn't match other form inputs
+**Solution**: Matched font size (0.85rem), padding, and styling
+
+## Important Files to Monitor
+
+-   `resources/js/app.js` and `resources/js/app-modular.js` (frontend logic)
+-   `resources/js/modules/` (modular JavaScript components)
+-   `resources/css/app.css` (frontend styles)
+-   `app/Http/Controllers/TemplateController.php` (template API)
+-   `app/Models/Template.php` and `TemplateItem.php` (data models)
+
+## Development Notes
+
+1. **Modular Frontend**: JavaScript organized in modules under `resources/js/modules/`
+2. **API Endpoints**: Templates API at `/api/templates` with full CRUD operations
+3. **Database**: Templates and template_items tables with layer data support
+4. **Standard Laravel Setup**: Direct Laravel application without containerization
+5. **Color Conversion**: JavaScript handles RGB/CMYK conversion calculations
+
+## CSS Class Hierarchy
+
+-   `.guide-lines-container`: z-index 999 (always on top)
+-   `.guide-line`: cyan color (#00FFFF)
+-   `.cmyk-inputs .cmyk-row`: horizontal layout, 55px width inputs
+-   Canvas elements: lower z-index for proper layering
+
+## API Validation Rules
+
+-   Template names must be unique (only for new templates)
+-   Template updates via PUT don't re-validate name unless changed
+-   Layer data stored as JSON in templates table
+
+## Future Considerations
+
+-   Monitor template loading performance with large layer data
+-   Ensure CMYK/RGB conversion accuracy for print production
+-   Add template versioning if needed
+-   Consider further modularization of frontend components
+
+## Development Environment
+
+-   Domain: builder.test
+-   Standard Laravel development server
+-   Database accessible via standard Laravel configuration
+-   Assets compiled/served through Laravel Mix/Vite
+
+## Testing Notes
+
+-   Template CRUD operations tested via curl commands
+-   Guide line behavior verified in browser
+-   Color input validation working correctly
+-   Modular frontend architecture supports better testing isolation
