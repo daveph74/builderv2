@@ -226,6 +226,7 @@ export class DragDropEditor {
 
     // Element Selection
     selectElement(element) {
+        
         this.deselectAll();
         this.selectedElement = element;
         element.classList.add("selected");
@@ -267,7 +268,7 @@ export class DragDropEditor {
         
         const controlsContainer = document.createElement('div');
         controlsContainer.className = 'element-controls';
-        controlsContainer.dataset.elementId = element.dataset.id;
+        controlsContainer.setAttribute('data-element-id', element.dataset.id);
         
         // Position the controls container
         controlsContainer.style.position = 'absolute';
@@ -297,8 +298,11 @@ export class DragDropEditor {
             handle.style.pointerEvents = 'auto';
             handle.dataset.position = pos.class;
             
+            controlsContainer.appendChild(handle);
+            
             // Add resize event listeners
             handle.addEventListener('mousedown', (e) => {
+                
                 e.preventDefault();
                 e.stopPropagation();
                 this.startResize(element, pos.class, e);
@@ -347,6 +351,7 @@ export class DragDropEditor {
     updateVisualControlsPosition(element) {
         // Updating visual controls position
         const controlsContainer = this.canvas.querySelector(`[data-element-id="${element.dataset.id}"]`);
+        
         if (controlsContainer) {
             controlsContainer.style.left = (element.offsetLeft) + 'px';
             controlsContainer.style.top = (element.offsetTop) + 'px';
@@ -357,12 +362,24 @@ export class DragDropEditor {
 
     // Resize functionality
     startResize(element, position, e) {
+        console.log('🚀 START RESIZE DEBUG: Starting resize operation:', {
+            passedElementId: element.dataset.id,
+            passedElementType: element.dataset.type,
+            resizePosition: position,
+            currentSelectedElement: this.selectedElement ? this.selectedElement.dataset.id : 'none',
+            elementMatches: element === this.selectedElement,
+            allElementsInEditor: this.elements.map(el => ({ id: el.id, type: el.type }))
+        });
+        
         this._isResizing = true;
         this.resizePosition = position;
         this.resizeElement = element;
         
         const elementData = this.elements.find(el => el.id === element.dataset.id);
-        if (!elementData) return;
+        if (!elementData) {
+            console.error('❌ RESIZE ERROR: Element data not found for ID:', element.dataset.id);
+            return;
+        }
         
         this.resizeStartData = {
             x: elementData.x,
@@ -394,6 +411,10 @@ export class DragDropEditor {
         
         const elementData = this.elements.find(el => el.id === this.resizeElement.dataset.id);
         if (!elementData) return;
+        
+
+        
+
         
         const deltaX = (e.clientX - this.resizeStartData.mouseX) / this.zoomLevel;
         const deltaY = (e.clientY - this.resizeStartData.mouseY) / this.zoomLevel;
@@ -472,6 +493,8 @@ export class DragDropEditor {
         elementData.width = newWidth;
         elementData.height = newHeight;
         
+
+        
         // Resize operation completed successfully
         
         // Element resize completed successfully
@@ -479,9 +502,12 @@ export class DragDropEditor {
         this.updateElementStyle(this.resizeElement, elementData);
         this.updateVisualControlsPosition(this.resizeElement);
         this.updatePropertiesPanel();
+        
+
     }
 
     stopResize() {
+        
         this._isResizing = false;
         this.resizeElement = null;
         this.resizePosition = null;
@@ -496,6 +522,8 @@ export class DragDropEditor {
         document.removeEventListener('mousemove', this.boundHandleResize);
         document.removeEventListener('mouseup', this.boundStopResize);
         document.body.style.userSelect = '';
+        
+
     }
 
     // Rotation functionality (placeholder)
@@ -1500,6 +1528,8 @@ export class DragDropEditor {
     updateElementStyle(element, elementData) {
         if (!element || !elementData) return;
         
+
+        
         // Update element visual styles
         
         // Basic element styling
@@ -2211,4 +2241,6 @@ export class DragDropEditor {
     get isDragging() {
         return this.dragHandler.isCurrentlyDragging();
     }
+
+
 } 

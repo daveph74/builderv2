@@ -5,14 +5,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>{{ config('app.name', 'PDF Editor') }} - Drag & Drop PDF Editor</title>
+    <title>{{ config('app.name', 'Connect Editor') }} - Drag & Drop PDF Editor</title>
     @vite(['resources/css/app.css', 'resources/js/app-modular.js'])
 </head>
 
 <body>
     <div class="app-container">
         <header class="header">
-            <h1><i class="fas fa-file-pdf"></i> PDF Editor</h1>
+            <h1><i class="fas fa-file-pdf"></i> PDFd Editor</h1>
 
             <div class="header-insert-section">
                 <div class="insert-section">

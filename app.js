@@ -849,7 +849,7 @@ class DragDropEditor {
         
         const controlsContainer = document.createElement('div');
         controlsContainer.className = 'element-controls';
-        controlsContainer.dataset.elementId = element.dataset.id;
+        controlsContainer.setAttribute('data-element-id', element.dataset.id);
         
         // Position the controls container
         const rect = element.getBoundingClientRect();

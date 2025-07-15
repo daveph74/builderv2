@@ -35,6 +35,14 @@ export class ElementManager {
         this.elementNameCounters[type]++;
         const name = this.generateElementName(type, this.elementNameCounters[type]);
         
+        console.log('🏗️ MODULAR CREATE DEBUG: Creating new element:', {
+            elementId: element.dataset.id,
+            elementType: type,
+            elementName: name,
+            position: { x, y },
+            elementCounter: this.elementCounter
+        });
+        
         const elementData = {
             id: element.dataset.id,
             name: name,

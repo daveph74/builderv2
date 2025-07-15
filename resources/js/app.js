@@ -575,6 +575,14 @@ class DragDropEditor {
         this.elementNameCounters[type]++;
         const elementName = this.generateElementName(type, this.elementNameCounters[type]);
         
+        console.log('🏗️ CREATE DEBUG: Creating new element:', {
+            elementId: element.dataset.id,
+            elementType: type,
+            elementName: elementName,
+            position: { x, y },
+            elementCounter: this.elementCounter
+        });
+        
         const elementData = {
             id: element.dataset.id,
             name: elementName,
@@ -823,6 +831,12 @@ class DragDropEditor {
     }
     
     selectElement(element) {
+        console.log('🎯 SELECT DEBUG: Selecting element:', {
+            elementId: element.dataset.id,
+            elementType: element.dataset.type,
+            previousSelection: this.selectedElement ? this.selectedElement.dataset.id : 'none'
+        });
+        
         this.deselectAll();
         this.selectedElement = element;
         element.classList.add('selected');
@@ -870,7 +884,7 @@ class DragDropEditor {
         
         const controlsContainer = document.createElement('div');
         controlsContainer.className = 'element-controls';
-        controlsContainer.dataset.elementId = element.dataset.id;
+        controlsContainer.setAttribute('data-element-id', element.dataset.id);
         
         // Position the controls container
         const rect = element.getBoundingClientRect();
@@ -984,6 +998,21 @@ class DragDropEditor {
         const elementData = this.elements.find(el => el.id === this.resizeElement.dataset.id);
         if (!elementData) return;
         
+        console.log('🔧 RESIZE DEBUG: Starting resize for element:', {
+            elementId: this.resizeElement.dataset.id,
+            elementType: elementData.type,
+            currentPosition: { x: elementData.x, y: elementData.y },
+            currentSize: { width: elementData.width, height: elementData.height }
+        });
+        
+        // Debug: Check all elements' positions before resize
+        console.log('📍 ALL ELEMENTS BEFORE RESIZE:', this.elements.map(el => ({
+            id: el.id,
+            type: el.type,
+            position: { x: el.x, y: el.y },
+            size: { width: el.width, height: el.height }
+        })));
+        
         const deltaX = (e.clientX - this.resizeStartData.mouseX) / this.zoomLevel;
         const deltaY = (e.clientY - this.resizeStartData.mouseY) / this.zoomLevel;
         
@@ -1061,12 +1090,30 @@ class DragDropEditor {
         elementData.width = newWidth;
         elementData.height = newHeight;
         
+        console.log('🔧 RESIZE DEBUG: After resize calculation:', {
+            elementId: this.resizeElement.dataset.id,
+            newPosition: { x: newX, y: newY },
+            newSize: { width: newWidth, height: newHeight },
+            resizePosition: this.resizePosition
+        });
+        
         this.updateElementStyle(this.resizeElement, elementData);
         this.updateVisualControlsPosition(this.resizeElement);
         this.updatePropertiesPanel();
+        
+        // Debug: Check all elements' positions after resize
+        console.log('📍 ALL ELEMENTS AFTER RESIZE:', this.elements.map(el => ({
+            id: el.id,
+            type: el.type,
+            position: { x: el.x, y: el.y },
+            size: { width: el.width, height: el.height }
+        })));
+        console.log('------- END RESIZE OPERATION -------');
     }
     
     stopResize() {
+        console.log('🛑 RESIZE STOP DEBUG: Stopping resize operation');
+        
         this.isResizing = false;
         this.resizeElement = null;
         this.resizePosition = null;
@@ -1081,6 +1128,14 @@ class DragDropEditor {
         document.removeEventListener('mousemove', this.boundHandleResize);
         document.removeEventListener('mouseup', this.boundStopResize);
         document.body.style.userSelect = '';
+        
+        // Final debug check of all element positions
+        console.log('📍 FINAL ELEMENT POSITIONS AFTER RESIZE STOP:', this.elements.map(el => ({
+            id: el.id,
+            type: el.type,
+            position: { x: el.x, y: el.y },
+            size: { width: el.width, height: el.height }
+        })));
     }
     
     startRotation(element, e) {
@@ -1147,6 +1202,14 @@ class DragDropEditor {
     
     updateVisualControlsPosition(element) {
         const controls = this.canvas.querySelector(`[data-element-id="${element.dataset.id}"]`);
+        console.log('🎯 CONTROLS DEBUG: Updating visual controls position:', {
+            elementId: element.dataset.id,
+            controlsFound: !!controls,
+            elementPosition: { left: element.offsetLeft, top: element.offsetTop },
+            elementSize: { width: element.offsetWidth, height: element.offsetHeight },
+            allControlsOnCanvas: this.canvas.querySelectorAll('.element-controls').length
+        });
+        
         if (controls) {
             controls.style.left = element.offsetLeft + 'px';
             controls.style.top = element.offsetTop + 'px';
@@ -1702,6 +1765,15 @@ class DragDropEditor {
     }
 
     updateElementStyle(element, elementData) {
+        console.log('🎨 UPDATE STYLE DEBUG: Updating element style:', {
+            elementId: element.dataset.id,
+            elementType: elementData.type,
+            position: { x: elementData.x, y: elementData.y },
+            size: { width: elementData.width, height: elementData.height },
+            isSelectedElement: element === this.selectedElement,
+            callStack: new Error().stack.split('\n').slice(1, 4).join('\n')
+        });
+        
         element.style.left = elementData.x + 'px';
         element.style.top = elementData.y + 'px';
         element.style.width = elementData.width + 'px';
